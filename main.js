@@ -60,6 +60,10 @@ const me = new THREE.Mesh(new THREE.BoxGeometry(4, 4, 4), new THREE.MeshBasicMat
 }));
 
 scene.add(me);
+const color = 0xFFF;  // white
+const near = 10;
+const far = 50;
+scene.fog = new THREE.Fog(color, near, far);
 
 const light = new THREE.AmbientLight( 0x404040 ); // soft white light
 scene.add( light );
@@ -86,6 +90,17 @@ me.position.z = -7;
 me.position.x = 4;
 
 // Scroll Animation
+
+function resizeRendererToDisplaySize(renderer) {
+  const canvas = renderer.domElement;
+  const width = canvas.clientWidth;
+  const height = canvas.clientHeight;
+  const needResize = canvas.width !== width || canvas.height !== height;
+  if (needResize) {
+    renderer.setSize(width, height, false);
+  }
+  return needResize;
+}
 
 function moveCamera() {
   const t = document.body.getBoundingClientRect().top;
@@ -115,6 +130,12 @@ function animate() {
 
   me.rotation.y += 0.01;
 
+  if (resizeRendererToDisplaySize(renderer)) {
+    const canvas = renderer.domElement;
+    camera.aspect = canvas.clientWidth / canvas.clientHeight;
+    camera.updateProjectionMatrix();
+  }
+  
   // controls.update();
 
   renderer.render(scene, camera);
